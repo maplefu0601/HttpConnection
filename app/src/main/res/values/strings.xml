@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">wearAuth</string>
+    <string name="hello_round">what</string>
+    <string name="hello_square">square</string>
+</resources>
