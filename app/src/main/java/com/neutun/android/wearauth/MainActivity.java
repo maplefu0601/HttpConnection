@@ -15,6 +15,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.common.api.GoogleApiClient;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -37,6 +41,12 @@ public class MainActivity extends Activity {
     private TextView mTextView;
     private EditText edtUserName, edtPassword;
     private Button btnLogin;
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
+
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -64,8 +74,8 @@ public class MainActivity extends Activity {
         btnLogin = (Button) stub.findViewById(R.id.login);
         if (true) {
 
-Log.d("TEST", "binding click event");
-            btnLogin.setOnClickListener(new View.OnClickListener() {
+            Log.d("TEST", "binding click event");
+            btnLogin.setOnClickListener(new OnClickListener() {
                 /**
                  * Called when a view has been clicked.
                  *
@@ -80,18 +90,63 @@ Log.d("TEST", "binding click event");
             });
         }
 
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
-    public void doClick(View view)
-    {
+    public void doClick(View view) {
         final String strUserName = edtUserName.getText().toString();
         final String strPassword = edtPassword.getText().toString();
-        Log.d("TEST", "user:"+strUserName+"---pass:"+strPassword);
-        new MyAsyncTask().execute(strUserName, strPassword);
+        LoginParam.getInstance().setUserName(strUserName);
+        LoginParam.getInstance().setPassword(strPassword);
+        Log.d("TEST", "user:" + strUserName + "---pass:" + strPassword);
+
+        new Thread(new LoginTask()).start();
+        //new MyAsyncTask().execute(strUserName, strPassword);
     }
 
-    private class MyAsyncTask extends AsyncTask<String, String, String>
-    {
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.connect();
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "Main Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app deep link URI is correct.
+                Uri.parse("android-app://com.neutun.android.wearauth/http/host/path")
+        );
+        AppIndex.AppIndexApi.start(client, viewAction);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "Main Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app deep link URI is correct.
+                Uri.parse("android-app://com.neutun.android.wearauth/http/host/path")
+        );
+        AppIndex.AppIndexApi.end(client, viewAction);
+        client.disconnect();
+    }
+
+    private class MyAsyncTask extends AsyncTask<String, String, String> {
 
         /**
          * Override this method to perform a computation on a background thread. The
@@ -120,8 +175,7 @@ Log.d("TEST", "binding click event");
             return post(pairsList);
         }
 
-        public String post(List<Pair<String, String>> nameValuePairList)
-        {
+        public String post(List<Pair<String, String>> nameValuePairList) {
             String strRet = "";
             HttpURLConnection connect = null;
             try {

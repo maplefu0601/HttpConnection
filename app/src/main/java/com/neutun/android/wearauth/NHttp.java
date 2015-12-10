@@ -1,6 +1,7 @@
 package com.neutun.android.wearauth;
 
 
+import android.util.Log;
 import android.util.Pair;
 
 import java.io.BufferedOutputStream;
@@ -109,16 +110,20 @@ public class NHttp {
 
     private String getResponse()
     {
+        Log.d("LOGIN", "getResponse()");
         InputStream iStream = null;
         try {
-            iStream = connection.getInputStream();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        BufferedReader rd = new BufferedReader(new InputStreamReader(iStream));
-        String line;
-        StringBuffer response = new StringBuffer();
-        try {
+            int resCode = connection.getResponseCode();
+            Log.d("LOGIN", "getResponsecode() " + resCode);
+            if(resCode == HttpURLConnection.HTTP_OK) {
+
+                iStream = connection.getInputStream();
+            } else {
+                iStream = connection.getErrorStream();
+            }
+            BufferedReader rd = new BufferedReader(new InputStreamReader(iStream));
+            String line;
+            StringBuffer response = new StringBuffer();
             while ((line = rd.readLine()) != null) {
                 response.append(line);
                 response.append('\r');
@@ -126,10 +131,11 @@ public class NHttp {
 
             rd.close();
             iStream.close();
+
+            return response.toString();
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        return response.toString();
+        return "";
     }
 }
