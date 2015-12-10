@@ -15,6 +15,12 @@ import java.util.List;
  */
 public class LoginTask implements Runnable {
     private static String TAG = "LOGIN";
+    LoginCallback callback;
+
+    public LoginTask(LoginCallback c)
+    {
+        this.callback = c;
+    }
 
     /**
      * Starts executing the active part of the class' code. This method is
@@ -37,6 +43,9 @@ public class LoginTask implements Runnable {
             Log.e(TAG, "wrong user name or password.");
         } else {
             Log.d(TAG, "login succcessful.");
+        }
+        if(this.callback != null) {
+            this.callback.callback(!res.isEmpty());
         }
 
     }

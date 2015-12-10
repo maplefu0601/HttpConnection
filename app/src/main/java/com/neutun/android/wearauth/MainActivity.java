@@ -36,7 +36,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements LoginCallback{
 
     private TextView mTextView;
     private EditText edtUserName, edtPassword;
@@ -102,7 +102,7 @@ public class MainActivity extends Activity {
         LoginParam.getInstance().setPassword(strPassword);
         Log.d("TEST", "user:" + strUserName + "---pass:" + strPassword);
 
-        new Thread(new LoginTask()).start();
+        new Thread(new LoginTask(this)).start();
         //new MyAsyncTask().execute(strUserName, strPassword);
     }
 
@@ -144,6 +144,11 @@ public class MainActivity extends Activity {
         );
         AppIndex.AppIndexApi.end(client, viewAction);
         client.disconnect();
+    }
+
+    @Override
+    public void callback(boolean ret) {
+        Log.d("LOGIN", "callback "+ret);
     }
 
     private class MyAsyncTask extends AsyncTask<String, String, String> {
