@@ -5,6 +5,8 @@ import android.net.Uri;
 import android.net.UrlQuerySanitizer;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.wearable.view.WatchViewStub;
 import android.util.Log;
 import android.util.Pair;
@@ -102,7 +104,7 @@ public class MainActivity extends Activity implements LoginCallback{
         LoginParam.getInstance().setPassword(strPassword);
         Log.d("TEST", "user:" + strUserName + "---pass:" + strPassword);
 
-        new Thread(new LoginTask(this)).start();
+        new Thread(new LoginTask(handler)).start();
         //new MyAsyncTask().execute(strUserName, strPassword);
     }
 
@@ -150,6 +152,13 @@ public class MainActivity extends Activity implements LoginCallback{
     public void callback(boolean ret) {
         Log.d("LOGIN", "callback "+ret);
     }
+
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            Log.e("LOGIN", (String) msg.obj);
+        }
+    };
 
     private class MyAsyncTask extends AsyncTask<String, String, String> {
 

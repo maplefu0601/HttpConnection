@@ -1,5 +1,7 @@
 package com.neutun.android.wearauth;
 
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.util.Pair;
 
@@ -16,10 +18,11 @@ import java.util.List;
 public class LoginTask implements Runnable {
     private static String TAG = "LOGIN";
     LoginCallback callback;
+    Handler handler;
 
-    public LoginTask(LoginCallback c)
+    public LoginTask(Handler handler)
     {
-        this.callback = c;
+        this.handler = handler;
     }
 
     /**
@@ -46,6 +49,11 @@ public class LoginTask implements Runnable {
         }
         if(this.callback != null) {
             this.callback.callback(!res.isEmpty());
+        }
+        if(this.handler != null) {
+            Message msg = new Message();
+            msg.obj = res.isEmpty() ? "Fail":"Success";
+            this.handler.sendMessage(msg);
         }
 
     }
